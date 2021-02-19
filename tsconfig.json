@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "out",
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true, // required for Decorators
+    "emitDecoratorMetadata": true,  // required for Decorators
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  }
+}
