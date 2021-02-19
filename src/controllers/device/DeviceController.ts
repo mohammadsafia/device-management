@@ -9,7 +9,7 @@ class DeviceController {
       const devices = await Device.find().populate("CreatedBy", "FirstName LastName").exec();
       response.json({ devices });
     } catch (err) {
-      throw InternalError(next, "Fetching users failed, please try again later.", 500)
+      throw InternalError(next, "Fetching devices failed, please try again later.", 500)
     }
   }
 
@@ -25,7 +25,7 @@ class DeviceController {
       }
 
     } catch (err) {
-      throw InternalError(next, "Fetching users failed, please try again later.", 500);
+      throw InternalError(next, "Fetching devices failed, please try again later.", 500);
     }
   }
 
@@ -94,7 +94,7 @@ class DeviceController {
         response.status(200).json({ message: 'Device deleted' })
       }
     } catch (err) {
-      throw InternalError(next, "Fetching users failed, please try again later.", 500);
+      throw InternalError(next, "Fetching devices failed, please try again later.", 500);
     }
   }
 

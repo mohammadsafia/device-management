@@ -6,3 +6,9 @@ export interface IAssignment extends Document {
   AssignmentTo: string;
   AssignmentFrom: string;
 }
+
+
+export enum AssignmentType {
+  Assign = "Assign",
+  UnAssign = "UnAssign"
+}
