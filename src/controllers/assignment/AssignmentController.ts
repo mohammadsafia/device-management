@@ -1,5 +1,4 @@
 import { NextFunction, RequestHandler } from 'express';
-import { UserRoles } from '../../interfaces';
 import Assignment from '../../models/AssignmentModels';
 import { InternalError } from '../../utils';
 class AssignmentController {

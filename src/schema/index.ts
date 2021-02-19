@@ -39,3 +39,16 @@ export const deviceSchema = Joi.object().keys({
   OSVersion: Joi.string().required(),
   Notes: Joi.string().optional(),
 })
+
+export const deviceMaintenance = Joi.object().keys({
+  Notes: Joi.string().required(),
+})
+
+
+export const inputSchema = {
+  deviceMaintenance,
+  deviceSchema,
+  loginUserSchema,
+  updateUserSchema,
+  createUserSchema
+}

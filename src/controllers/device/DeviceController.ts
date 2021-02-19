@@ -1,8 +1,7 @@
 import { Request, NextFunction, RequestHandler, Response } from 'express';
-import { deviceSchema } from '../../schema';
 import Device from '../../models/DeviceModels';
 import { InternalError } from '../../utils';
-import { IDevice, IUserRequest, UserRoles } from '../../interfaces';
+import { IDevice } from '../../interfaces';
 class DeviceController {
   public GetDevices: RequestHandler = async (request, response, next): Promise<void> => {
     try {
@@ -30,7 +29,7 @@ class DeviceController {
 
   public CreateDevice = async (request: Request | any, response: Response, next: NextFunction) => {
     const deviceInformation = { ...request.body };
-    await this.IsValidInputs(request, next);
+
     try {
       const device = new Device({ ...deviceInformation, CreatedBy: request.userData.userId });
       await device.save();
@@ -43,18 +42,13 @@ class DeviceController {
 
   public UpdateDeviceById: RequestHandler = async (request, response, next): Promise<void> => {
     let deviceId = request.params.deviceId;
-
     const deviceInformation: IDevice = { ...request.body };
-
-    await this.IsValidInputs(request, next);
-
     let device: IDevice | null
     try {
       device = await Device.findById(deviceId)
     } catch (error) {
       throw InternalError(next, "Could not update device, please try again.", 500)
     }
-
     if (device) {
       device.DeviceNumber = deviceInformation.DeviceNumber;
       device.Manufacture = deviceInformation.Manufacture;
@@ -90,13 +84,6 @@ class DeviceController {
   }
 
 
-  private IsValidInputs = async (request: Request, next: NextFunction): Promise<void> => {
-    let result = deviceSchema.validate(request.body);
-    if (result.error) {
-      throw InternalError(next, result.error.message, 422)
-    }
-  }
-
   private IsDevice = async (next: NextFunction, deviceId: string): Promise<void | IDevice> => {
     const device = await Device.findById(deviceId);
     if (!device) {
@@ -104,7 +91,6 @@ class DeviceController {
     }
     return device
   }
-
 }
 
 export default new DeviceController();

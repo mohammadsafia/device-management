@@ -49,7 +49,7 @@ export class Server {
         this._app.set("port", process.env.PORT || 3001);
     }
 
-    public connectWithDB() {
+    private connectWithDB() {
         /** Connect to Mongo */
         mongoose
             .connect(config.mongo.url, config.mongo.options)
@@ -61,21 +61,22 @@ export class Server {
             });
     }
 
-    public configureRoutes() {
+    private configureRoutes() {
         /** Routes go here */
         this._app.use('/api/auth', authRoutes);
         this._app.use('/api', userRoutes);
         this._app.use('/api', deviceRoutes);
-        this._app.use('/api', assignmentRoutes)
+        this._app.use('/api', assignmentRoutes);
     }
 
-    public configureMiddleware() {
+    private configureMiddleware() {
         // Required for POST requests
         this._app.use(bodyParser.json());
         this._app.use(bodyParser.urlencoded({ extended: true }));
 
         // CORS
         this.app.use(AccessController);
+
         /** Log the request */
         this._app.use(Logger);
 
@@ -83,7 +84,7 @@ export class Server {
         this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
 
-    public configureErrorHandler() {
+    private configureErrorHandler() {
         /** Error handling */
         this._app.use(() => {
             const error = new HttpError("Could not find this route.", 404);
@@ -99,5 +100,5 @@ export class Server {
     }
 }
 
-export const server = new Server();
+const server = new Server();
 server.start();

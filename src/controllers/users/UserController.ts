@@ -1,10 +1,9 @@
-import { Request, NextFunction, RequestHandler } from 'express';
+import { NextFunction, RequestHandler } from 'express';
 import User from '../../models/UserModels';
 import { UserService } from '../../services/UsersService';
 import { HttpError } from '../../middleware';
-import { createUserSchema, updateUserSchema } from '../../schema';
 import { InternalError } from '../../utils';
-import { UserRoles, UserSchema } from '../../interfaces/UserInterfaces';
+import { UserRoles } from '../../interfaces/UserInterfaces';
 import { IUser } from '../../interfaces/UserInterfaces';
 import bcrypt from 'bcryptjs';
 
@@ -23,10 +22,7 @@ class UserController {
     response.json({ users: result.map((user) => user.toObject({ getters: true })) });
   }
 
-
-
   public CreateUser: RequestHandler = async (request, response, next): Promise<void> => {
-    await this.IsValidInputs(request, next, UserSchema.CreateUser)
     await this.ExistingEmail(request.body.Email, next)
 
     let hashedPassword;
@@ -92,9 +88,6 @@ class UserController {
     try {
       const user = await this.IsUser(next, userId)
 
-      await this.IsValidInputs(request, next, UserSchema.UpdateUser)
-
-
       if (user) {
         if (user.Email !== Email) {
           await this.ExistingEmail(request.body.Email, next)
@@ -121,21 +114,6 @@ class UserController {
     }
   }
 
-
-
-  private IsValidInputs = async (request: Request, next: NextFunction, userSchema: UserSchema): Promise<void> => {
-    let result;
-
-    if (userSchema === UserSchema.CreateUser) {
-      result = createUserSchema.validate(request.body)
-    } else if (userSchema === UserSchema.UpdateUser) {
-      result = updateUserSchema.validate(request.body)
-    }
-
-    if (result?.error) {
-      throw InternalError(next, result.error.message, 422);
-    }
-  }
 
   private IsUser = async (next: NextFunction, userId: string): Promise<void | IUser> => {
     const user = await this.userService.GetUserDetailsById(userId)

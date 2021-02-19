@@ -1,19 +1,16 @@
-import { Request, NextFunction, RequestHandler } from 'express';
+import { NextFunction, RequestHandler } from 'express';
 import User from '../../models/UserModels'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 import config from '../../config/config';
 import { HttpError } from './../../middleware';
-import { createUserSchema, loginUserSchema } from '../../schema';
-import { AuthUserSchema, IUser, UserRoles } from '../../interfaces/UserInterfaces';
+import { IUser, UserRoles } from '../../interfaces/UserInterfaces';
 import { InternalError } from './../../utils';
 
 
 class AuthController {
   public SignUp: RequestHandler = async (request, response, next): Promise<void> => {
     const { FirstName, Email, Password, LastName, BirthDate } = request.body;
-    await this.IsValidInputs(request, next, AuthUserSchema.SignUp)
-
     try {
       await this.ExistingEmail(Email, next);
     } catch (error) {
@@ -51,8 +48,6 @@ class AuthController {
 
   public SignIn: RequestHandler = async (request, response, next): Promise<void> => {
     const { Password, Email } = request.body;
-
-    await this.IsValidInputs(request, next, AuthUserSchema.SignIn)
 
     let existingUser;
 
@@ -93,20 +88,6 @@ class AuthController {
     if (existingEmail) {
       const error = new HttpError("Email already exists, please try to use other email.", 422);
       throw next(error)
-    }
-  }
-
-  private IsValidInputs = async (request: Request, next: NextFunction, authUserSchema: AuthUserSchema): Promise<void> => {
-    let result;
-
-    if (authUserSchema === AuthUserSchema.SignIn) {
-      result = loginUserSchema.validate(request.body)
-    } else if (authUserSchema === AuthUserSchema.SignUp) {
-      result = createUserSchema.validate(request.body)
-    }
-
-    if (result?.error) {
-      throw InternalError(next, result.error.message, 422)
     }
   }
 
