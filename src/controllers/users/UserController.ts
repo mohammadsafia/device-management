@@ -3,7 +3,7 @@ import User from '../../models/UserModels';
 import { UserService } from '../../services/UsersService';
 import { HttpError } from '../../middleware';
 import { createUserSchema, updateUserSchema } from '../../schema';
-import { InternalError, IsAdminOrMaintainer } from '../../utils';
+import { InternalError } from '../../utils';
 import { UserRoles, UserSchema } from '../../interfaces/UserInterfaces';
 import { IUser } from '../../interfaces/UserInterfaces';
 import bcrypt from 'bcryptjs';
@@ -26,7 +26,6 @@ class UserController {
 
 
   public CreateUser: RequestHandler = async (request, response, next): Promise<void> => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin])
     await this.IsValidInputs(request, next, UserSchema.CreateUser)
     await this.ExistingEmail(request.body.Email, next)
 
@@ -48,7 +47,6 @@ class UserController {
 
 
   public DeleteUserById: RequestHandler<{ userId: string }> = async (request, response, next) => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin])
 
     let userId = request.params.userId;
     try {
@@ -71,7 +69,6 @@ class UserController {
 
 
   public GetUserDetailsById: RequestHandler<{ userId: string }> = async (request, response, next) => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin]);
 
     let userId = request.params.userId;
     try {

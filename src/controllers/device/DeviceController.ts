@@ -1,8 +1,8 @@
-import { Request, NextFunction, RequestHandler } from 'express';
+import { Request, NextFunction, RequestHandler, Response } from 'express';
 import { deviceSchema } from '../../schema';
 import Device from '../../models/DeviceModels';
-import { InternalError, IsAdminOrMaintainer } from '../../utils';
-import { IDevice, UserRoles } from '../../interfaces';
+import { InternalError } from '../../utils';
+import { IDevice, IUserRequest, UserRoles } from '../../interfaces';
 class DeviceController {
   public GetDevices: RequestHandler = async (request, response, next): Promise<void> => {
     try {
@@ -14,7 +14,6 @@ class DeviceController {
   }
 
   public GetDeviceDetailsById: RequestHandler = async (request, response, next): Promise<void> => {
-
     let deviceId = request.params.deviceId;
     try {
       await this.IsDevice(next, deviceId);
@@ -29,14 +28,11 @@ class DeviceController {
     }
   }
 
-  public CreateDevice: RequestHandler = async (request: any, response, next): Promise<void> => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin, UserRoles.Maintainer]);
-
+  public CreateDevice = async (request: Request | any, response: Response, next: NextFunction) => {
     const deviceInformation = { ...request.body };
     await this.IsValidInputs(request, next);
-
     try {
-      const device = new Device({ ...deviceInformation, CreatedBy: request?.userData?.userId });
+      const device = new Device({ ...deviceInformation, CreatedBy: request.userData.userId });
       await device.save();
     } catch (error) {
       throw InternalError(next, "Could not create device, please try again.", 500)
@@ -46,8 +42,6 @@ class DeviceController {
   }
 
   public UpdateDeviceById: RequestHandler = async (request, response, next): Promise<void> => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin, UserRoles.Maintainer]);
-
     let deviceId = request.params.deviceId;
 
     const deviceInformation: IDevice = { ...request.body };
@@ -82,9 +76,6 @@ class DeviceController {
   }
 
   public DeleteDeviceById: RequestHandler = async (request, response, next): Promise<void> => {
-    await IsAdminOrMaintainer(request, next, [UserRoles.Admin, UserRoles.Maintainer]);
-
-
     let deviceId = request.params.deviceId;
     try {
       await this.IsDevice(next, deviceId);

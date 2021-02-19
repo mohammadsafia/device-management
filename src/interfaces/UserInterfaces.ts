@@ -1,5 +1,6 @@
 
 import { Document } from 'mongoose';
+import { Request } from 'express';
 export interface IUser extends Document {
   Email: string;
   FirstName: string;
@@ -33,4 +34,17 @@ export enum UserRoles {
   Admin = 0,
   Maintainer = 1,
   User = 2
+}
+
+export interface IUserData {
+  userId: string
+}
+
+export interface IUserRole {
+  role: string
+}
+
+export interface IUserRequest extends Request {
+  userData: IUserData,
+  userRole: IUserRole
 }

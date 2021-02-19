@@ -4,7 +4,7 @@ import moment from 'moment'
 export class UserService {
 
   public CreateUser = async (userDetails: ICreateUser): Promise<IUser> => {
-    const BirthDate = moment(userDetails.BirthDate, "YYYY/MM/DD").utc().toDate()
+    const BirthDate = moment.utc(userDetails.BirthDate, "YYYY/MM/DD").toDate()
     let user = await User.create({ ...userDetails, BirthDate })
     return await user.save();
   }

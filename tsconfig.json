@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./src/utils"],
     "target": "es6",
     "module": "commonjs",
     "sourceMap": true,
@@ -7,9 +8,18 @@
     "strict": true,
     "esModuleInterop": true,
     "experimentalDecorators": true, // required for Decorators
-    "emitDecoratorMetadata": true,  // required for Decorators
+    "emitDecoratorMetadata": true, // required for Decorators
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+  },
+  "include": [
+    "lib/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "files": [
+    "types.d.ts"
+  ]
 }
