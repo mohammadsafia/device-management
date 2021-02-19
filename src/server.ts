@@ -16,6 +16,7 @@ import config from './config/config';
 import userRoutes from './routes/UserRoutes';
 import authRoutes from './routes/AuthRoutes';
 import deviceRoutes from './routes/DeviceRoutes';
+import assignmentRoutes from './routes/AssignmentRoutes';
 
 /** Middleware */
 import { Logger, AccessController, HttpError, CheckHttpError } from './middleware';
@@ -64,7 +65,8 @@ export class Server {
         /** Routes go here */
         this._app.use('/api/auth', authRoutes);
         this._app.use('/api', userRoutes);
-        this._app.use('/api', deviceRoutes)
+        this._app.use('/api', deviceRoutes);
+        this._app.use('/api', assignmentRoutes)
     }
 
     public configureMiddleware() {
