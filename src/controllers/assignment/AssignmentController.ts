@@ -51,7 +51,7 @@ class AssignmentController {
 
   private IsDeviceUnAssigned = async (DeviceId: string, next: NextFunction) => {
     let assignments = await Assignment.find({ DeviceId }).select('AssignTo').slice('array', -1);
-    if (assignments && assignments.slice(-1)[0].AssignTo === null) {
+    if (assignments && assignments.slice(-1)[0]?.AssignTo === null) {
       throw InternalError(next, "This Device already unassigned", 400)
     }
   }

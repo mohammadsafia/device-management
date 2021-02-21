@@ -6,8 +6,6 @@ import config from '../../config/config';
 import { HttpError } from './../../middleware';
 import { IUser, UserRoles } from '../../interfaces/UserInterfaces';
 import { InternalError } from './../../utils';
-
-
 class AuthController {
   public SignUp: RequestHandler = async (request, response, next): Promise<void> => {
     const { FirstName, Email, Password, LastName, BirthDate } = request.body;
@@ -44,6 +42,7 @@ class AuthController {
     } catch (error) {
       throw InternalError(next, "Could not create user, please try again.", 500)
     }
+
   }
 
   public SignIn: RequestHandler = async (request, response, next): Promise<void> => {
