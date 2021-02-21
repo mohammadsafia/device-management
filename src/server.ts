@@ -100,6 +100,7 @@ export class Server {
         this._server = this._app.listen(config.server.port, () =>
             logging.info(config.server.namespace, `Server is running ${config.server.hostname}:${config.server.port}`));
     }
+
 }
 
 const server = new Server();

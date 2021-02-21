@@ -13,13 +13,17 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
   },
-  "include": [
-    "lib/**/*.ts"
+  "include" : [
+    "src/**/*.ts"   /* Include every ts file in source folder */
   ],
   "exclude": [
     "node_modules"
   ],
   "files": [
     "./src/utils/types.d.ts"
-  ]
+  ],
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "dev": "nodemon -x ts-node src/server.ts"
+},
 }
