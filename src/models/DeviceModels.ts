@@ -14,7 +14,11 @@ const DeviceSchema: Schema = new Schema({
   OS: { type: String, required: true },
   OSVersion: { type: String, required: true },
   Notes: { type: String, required: false },
-  CreatedBy: { type: Schema.Types.ObjectId, ref: "User" }
+  CreatedBy: { type: Schema.Types.ObjectId, ref: "User" },
+  AssignmentHistory: [{
+    UpdatedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    AssignTo: { type: Schema.Types.ObjectId, ref: "User" },
+  }],
 }, { timestamps: { createdAt: 'CreatedDate', updatedAt: 'UpdatedDate' } });
 
 export default mongoose.model<IDevice>('Device', DeviceSchema);

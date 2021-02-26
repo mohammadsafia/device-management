@@ -13,5 +13,11 @@ export interface IDevice extends Document {
   OS: string,
   OSVersion: string,
   Notes: string,
-  CreatedBy: string
+  CreatedBy: string,
+  AssignmentHistory: IsDeviceAssignedHistory[]
+}
+
+export interface IsDeviceAssignedHistory {
+  UpdatedBy: string
+  AssignTo: string | null
 }

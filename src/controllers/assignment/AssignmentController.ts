@@ -1,17 +1,23 @@
 import { NextFunction, RequestHandler } from 'express';
-import Assignment from '../../models/AssignmentModels';
 import { InternalError } from '../../utils';
+import Device from '../../models/DeviceModels';
+import { HttpError } from './../../middleware';
 class AssignmentController {
   public AssignDevice: RequestHandler<{ deviceId: string, userId: string }> = async (request: any, response, next): Promise<void> => {
     const DeviceId: string = request.params.deviceId;
     const UserId: string = request.params.userId;
-    const UpdatedBy = request.userData.userId;
+    const UpdatedBy: string = request.userData.userId;
 
+    await this.IsDeviceExist(DeviceId, next);
+
+    let device = await Device.findOne({ _id: DeviceId });
 
     await this.IsDeviceAssigned(DeviceId, next);
     try {
-      const assignment = new Assignment({ DeviceId, UpdatedBy, AssignTo: UserId });
-      await assignment.save();
+      if (device) {
+        device.AssignmentHistory.push({ UpdatedBy, AssignTo: UserId })
+        device.save();
+      }
       response.status(201).json({ message: 'Device Assigned Successfully' })
     } catch (err) {
       throw InternalError(next, "Fetching assignment failed, please try again later.", 500)
@@ -22,11 +28,17 @@ class AssignmentController {
     const DeviceId: string = request.params.deviceId;
     const UpdatedBy = request.userData.userId;
 
+    await this.IsDeviceExist(DeviceId, next);
+
+    let device = await Device.findOne({ _id: DeviceId });
+
     await this.IsDeviceUnAssigned(DeviceId, next)
     try {
-      const assignment = new Assignment({ DeviceId, UpdatedBy, AssignTo: null });
-      await assignment.save();
-      response.status(201).json({ message: 'Device Assigned Successfully', deviceId: DeviceId })
+      if (device) {
+        device.AssignmentHistory.push({ UpdatedBy, AssignTo: null })
+        device.save();
+      }
+      response.status(200).json({ message: 'Device Un Assigned Successfully', deviceId: DeviceId })
     } catch (err) {
       throw InternalError(next, "Fetching assignment failed, please try again later.", 500)
     }
@@ -35,24 +47,45 @@ class AssignmentController {
   public AssignHistory: RequestHandler<{ deviceId: string }> = async (request: any, response, next): Promise<void> => {
     const DeviceId: string = request.params.deviceId;
     try {
-      let assignHistory = await Assignment.find({ DeviceId }).populate("UpdatedBy AssignTo AssignFrom", "FirstName LastName").exec();
-      response.status(200).json({ history: assignHistory })
+      let history = await Device.findOne({ _id: DeviceId }, { _id: 0, AssignmentHistory: 1 },)
+        .populate('AssignmentHistory.AssignTo AssignmentHistory.UpdatedBy', { _id: 0, FirstName: 1, LastName: 1 }).exec();
+
+      response.status(200).json({ history })
     } catch (err) {
       throw InternalError(next, "Fetching assignment failed, please try again later.", 500)
     }
   }
 
   private IsDeviceAssigned = async (DeviceId: string, next: NextFunction) => {
-    let assignments = await Assignment.find({ DeviceId }).select('AssignTo').slice('array', -1);
-    if (assignments && assignments.slice(-1)[0].AssignTo !== null) {
-      throw InternalError(next, "You can't assign this device before unassign it", 400)
+    let device = await Device.findOne({ _id: DeviceId });
+    if (device) {
+      let AssignmentHistory = device?.AssignmentHistory.slice(-1)[0];
+      if (AssignmentHistory.AssignTo !== null)
+        throw InternalError(next, "You can't assign this device before unassign it", 400)
     }
   }
 
   private IsDeviceUnAssigned = async (DeviceId: string, next: NextFunction) => {
-    let assignments = await Assignment.find({ DeviceId }).select('AssignTo').slice('array', -1);
-    if (assignments && assignments.slice(-1)[0]?.AssignTo === null) {
-      throw InternalError(next, "This Device already unassigned", 400)
+    let device = await Device.findOne({ _id: DeviceId });
+    if (device) {
+      let AssignmentHistory = device?.AssignmentHistory.slice(-1)[0];
+      if (AssignmentHistory.AssignTo === null)
+        throw InternalError(next, "This Device already unassigned", 400)
+    }
+  }
+
+  private IsDeviceExist = async (DeviceId: string, next: NextFunction) => {
+    let existingDevice;
+    try {
+      existingDevice = await Device.findOne({ _id: DeviceId });
+    } catch (err) {
+      const error = new HttpError("Something wrong, please try again later.", 500);
+      throw next(error)
+    }
+
+    if (!existingDevice) {
+      const error = new HttpError("We can't find this device, please try again later.", 404);
+      throw next(error)
     }
   }
 }
