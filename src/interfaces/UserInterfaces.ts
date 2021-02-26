@@ -6,7 +6,7 @@ export interface IUser extends Document {
   FirstName: string;
   LastName: string;
   Password: string;
-  Role: UserRoles;
+  Roles: number[];
   BirthDate: Date
 }
 
@@ -15,7 +15,7 @@ export interface ICreateUser {
   FirstName: IUser['FirstName'];
   LastName: IUser['LastName'];
   Password: IUser['Password'];
-  Role: IUser['Role'];
+  Roles: IUser['Roles'];
   BirthDate: IUser['BirthDate']
 }
 

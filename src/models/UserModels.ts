@@ -12,7 +12,7 @@ const UserSchema: Schema = new Schema({
   FirstName: { type: String, required: true },
   LastName: { type: String, required: true },
   Password: { type: String, required: true },
-  Role: { type: Number, required: true },
+  Roles: [Number],
   BirthDate: { type: Date, required: true }
 }, { timestamps: { createdAt: 'CreatedDate', updatedAt: 'UpdatedDate' } });
 

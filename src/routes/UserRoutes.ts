@@ -11,4 +11,5 @@ router.post('/users', [CheckAuth, CheckRole([UserRoles.Admin]), CheckInputs(Inpu
 router.put('/user/:userId', [CheckAuth, CheckRole([UserRoles.Admin])], CheckInputs(InputSchema.UpdateUser), UserController.UpdateUserById)
 router.delete('/user/:userId', [CheckAuth, CheckRole([UserRoles.Admin])], UserController.DeleteUserById);
 
+router.put('/user/roles/:userId', [CheckAuth, CheckRole([UserRoles.Admin])], UserController.UpdateUserRoles)
 export default router

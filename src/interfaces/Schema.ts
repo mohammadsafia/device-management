@@ -3,5 +3,6 @@ export enum InputSchema {
   UpdateUser = "updateUserSchema",
   Login = "loginUserSchema",
   Device = "deviceSchema",
-  Maintenance = "deviceMaintenance"
+  Maintenance = "deviceMaintenance",
+  MaintenanceStatus = "deviceStatus"
 } 

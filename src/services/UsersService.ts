@@ -10,11 +10,11 @@ export class UserService {
   }
 
   public GetUsers = async (): Promise<IUser[]> => {
-    return await User.find({}, "-Password -Role")
+    return await User.find({}, "-Password -Roles")
   }
 
   public GetUserDetailsById = async (userId: string): Promise<IUser | null> => {
-    return await User.findById(userId, "-Password -Role")
+    return await User.findById(userId, "-Password -Roles")
   }
 
   public DeleteUserById = async (userId: string): Promise<IUser | null> => {

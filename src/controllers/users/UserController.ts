@@ -33,7 +33,7 @@ class UserController {
     }
 
     try {
-      const result = await this.userService.CreateUser({ ...request.body, Password: hashedPassword, Role: UserRoles.User });
+      const result = await this.userService.CreateUser({ ...request.body, Password: hashedPassword, Roles: [UserRoles.User] });
       response.status(201).json({ message: `A new account has been created using this email: "${result.Email}"` })
     } catch (error) {
       throw InternalError(next, "Could not create user, please try again.", 500)
@@ -43,16 +43,13 @@ class UserController {
 
 
   public DeleteUserById: RequestHandler<{ userId: string }> = async (request, response, next) => {
-
     let userId = request.params.userId;
     try {
+      await this.IsUser(next, userId);
       let user = await this.IsUser(next, userId);
-
-
-      if (user && user.Role === UserRoles.Admin) {
+      if (user && user.Roles.includes(UserRoles.Admin)) {
         throw InternalError(next, "You Can't delete this user", 403)
       }
-
       const result = await this.userService.DeleteUserById(userId);
       if (result) {
         response.status(200).json({ message: 'User deleted' })
@@ -74,7 +71,6 @@ class UserController {
       if (result) {
         response.status(200).json({ user: result.toObject({ getters: true }) })
       }
-
     } catch (err) {
       throw InternalError(next, "Fetching users failed, please try again later.", 500);
     }
@@ -83,7 +79,7 @@ class UserController {
 
 
   public UpdateUserById: RequestHandler<{ userId: string }> = async (request, response, next) => {
-    let userId = request.params.userId
+    const userId = request.params.userId
     const { Email, LastName, FirstName, BirthDate } = request.body;
     try {
       const user = await this.IsUser(next, userId)
@@ -101,6 +97,21 @@ class UserController {
     }
   }
 
+  public UpdateUserRoles: RequestHandler<{ userId: string }> = async (request, response, next): Promise<void> => {
+    const UserId = request.params.userId;
+    const Roles = request.body.Roles || [];
+    await this.IsUser(next, UserId);
+
+    try {
+      const user = await User.findByIdAndUpdate(UserId, { Roles })
+      await user?.save();
+      response.status(200).json({ message: 'Updated Successfully' })
+    } catch (error) {
+      throw InternalError(next, "Fetching users failed, please try again later.", 500);
+    }
+  }
+
+
 
   private ExistingEmail = async (Email: string, next: NextFunction): Promise<void> => {
     let existingEmail: IUser | null;
@@ -113,6 +124,7 @@ class UserController {
       throw InternalError(next, "Email already exists, please try to use other email.", 422);
     }
   }
+
 
 
   private IsUser = async (next: NextFunction, userId: string): Promise<void | IUser> => {

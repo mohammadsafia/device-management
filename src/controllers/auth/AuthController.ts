@@ -23,7 +23,7 @@ class AuthController {
       throw InternalError(next, "Could not create user, please try again.", 500)
     }
 
-    const createdUser = new User({ FirstName, LastName, Password: hashedPassword, Email, BirthDate, Role: UserRoles.User });
+    const createdUser = new User({ FirstName, LastName, Password: hashedPassword, Email, BirthDate, Roles: [UserRoles.User] });
     try {
       await createdUser.save();
     } catch (err) {
@@ -32,7 +32,7 @@ class AuthController {
 
     let token;
     try {
-      token = jwt.sign({ userId: createdUser.id, Email: createdUser.Email, Role: createdUser.Role }, config.server.jwt, { expiresIn: "1h" });
+      token = jwt.sign({ userId: createdUser.id, Email: createdUser.Email, Roles: createdUser.Roles }, config.server.jwt, { expiresIn: "1h" });
     } catch (err) {
       throw InternalError(next, "Could not create user, please try again.", 500)
     }
@@ -64,7 +64,7 @@ class AuthController {
 
     let token;
     try {
-      token = jwt.sign({ userId: existingUser?.id, Email: existingUser?.Email, Role: existingUser.Role }, config.server.jwt, { expiresIn: "1h" });
+      token = jwt.sign({ userId: existingUser?.id, Email: existingUser?.Email, Roles: existingUser.Roles }, config.server.jwt, { expiresIn: "1h" });
     } catch (err) {
       throw InternalError(next, "Could not sign in, please try again.", 500)
     }
