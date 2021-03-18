@@ -24,6 +24,7 @@ import { Logger, AccessController, HttpError, CheckHttpError } from './middlewar
 
 
 export class Server {
+    private static instance: Server;
     private readonly _app: Express;
 
     get app(): Express {
@@ -36,7 +37,13 @@ export class Server {
         return this._server;
     }
 
-    constructor() {
+    public static getInstance = (): Server => {
+        if (!Server.instance) Server.instance = new Server();
+
+        return Server.instance;
+    }
+
+    private constructor() {
         this._app = express();
 
         this.connectWithDB();
@@ -103,5 +110,5 @@ export class Server {
 
 }
 
-const server = new Server();
+const server = Server.getInstance();
 server.start();

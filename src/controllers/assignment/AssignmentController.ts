@@ -3,6 +3,16 @@ import { InternalError } from '../../utils';
 import Device from '../../models/DeviceModels';
 import { HttpError } from './../../middleware';
 class AssignmentController {
+  private static instance:AssignmentController;
+
+  private constructor(){}
+
+  public static getInstance=():AssignmentController => {
+    if (!AssignmentController.instance) AssignmentController.instance = new AssignmentController();
+
+    return AssignmentController.instance;
+  }
+  
   public AssignDevice: RequestHandler<{ deviceId: string, userId: string }> = async (request: any, response, next): Promise<void> => {
     const DeviceId: string = request.params.deviceId;
     const UserId: string = request.params.userId;
@@ -91,4 +101,4 @@ class AssignmentController {
 }
 
 
-export default new AssignmentController();
+export default AssignmentController.getInstance()

@@ -5,6 +5,17 @@ import Maintenance from '../../models/MaintenanceModels';
 import { InternalError } from '../../utils';
 
 class MaintenanceController {
+
+  private static instance:MaintenanceController;
+
+  private constructor(){}
+
+  public static getInstance=():MaintenanceController => {
+    if (!MaintenanceController.instance) MaintenanceController.instance = new MaintenanceController();
+
+    return MaintenanceController.instance;
+  }
+
   public CreateMaintenance: RequestHandler<{ deviceId: string }> = async (request: any, response, next): Promise<void> => {
     const DeviceId: string = request.params.deviceId;
     const CreatedBy = request.userData.userId;
@@ -106,4 +117,4 @@ class MaintenanceController {
 
 }
 
-export default new MaintenanceController();
+export default MaintenanceController.getInstance()

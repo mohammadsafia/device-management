@@ -8,7 +8,15 @@ import { IUser } from '../../interfaces/UserInterfaces';
 import bcrypt from 'bcryptjs';
 
 class UserController {
-  constructor(private userService: UserService) { }
+  private static instance: UserController;
+
+  private constructor(private userService: UserService = new UserService) { }
+
+  public static getInstance = (): UserController => {
+    if (!UserController.instance) UserController.instance = new UserController();
+
+    return UserController.instance;
+  }
 
   GetUsers: RequestHandler = async (req, response, next): Promise<void> => {
     let result;
@@ -136,4 +144,4 @@ class UserController {
   }
 }
 
-export default new UserController(new UserService);
+export default UserController.getInstance()

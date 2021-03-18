@@ -3,6 +3,16 @@ import Device from '../../models/DeviceModels';
 import { InternalError } from '../../utils';
 import { IDevice } from '../../interfaces';
 class DeviceController {
+  private static instance:DeviceController;
+
+  private constructor(){}
+
+  public static getInstance=():DeviceController => {
+    if (!DeviceController.instance) DeviceController.instance = new DeviceController();
+
+    return DeviceController.instance;
+  }
+  
   public GetDevices: RequestHandler = async (request, response, next): Promise<void> => {
     try {
       const devices = await Device.find().populate("CreatedBy", "FirstName LastName").exec();
@@ -93,4 +103,4 @@ class DeviceController {
   }
 }
 
-export default new DeviceController();
+export default DeviceController.getInstance()

@@ -7,6 +7,16 @@ import { HttpError } from './../../middleware';
 import { IUser, UserRoles } from '../../interfaces/UserInterfaces';
 import { InternalError } from './../../utils';
 class AuthController {
+  private static instance:AuthController;
+
+  private constructor(){}
+
+  public static getInstance=():AuthController => {
+    if (!AuthController.instance) AuthController.instance = new AuthController();
+
+    return AuthController.instance;
+  }
+
   public SignUp: RequestHandler = async (request, response, next): Promise<void> => {
     const { FirstName, Email, Password, LastName, BirthDate } = request.body;
     try {
@@ -104,4 +114,4 @@ class AuthController {
   }
 }
 
-export default new AuthController();
+export default AuthController.getInstance()
