@@ -42,14 +42,6 @@
           "Users"
         ],
         "summary": "Get all users in system",
-        "security": [
-          {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
-          }
-        ],
         "description": "Create new user in system",
         "parameters": [
           {

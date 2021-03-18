@@ -4,9 +4,10 @@
   "description": "",
   "main": "source/server.ts",
   "scripts": {
-    "build": "rm -rf build && prettier --write source/ && tsc",
+    "build": "tsc -p .",
     "start:dev": "nodemon",
-    "start": "ts-node index.ts"
+    "start": "ts-node build/server.js",
+    "start-production":"node ./build/server.js"
   },
   "author": "",
   "license": "ISC",

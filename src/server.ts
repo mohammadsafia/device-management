@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 /**Swagger */
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from '../swagger.json';
+// import swaggerDocument from '../swagger.json';
 
 
 /** Config */
@@ -89,8 +89,8 @@ export class Server {
         /** Log the request */
         this._app.use(Logger);
 
-        /** Swagger */
-        this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+        // /** Swagger */
+        // this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
 
     private configureErrorHandler() {
